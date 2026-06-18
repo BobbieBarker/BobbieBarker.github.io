@@ -1,0 +1,14 @@
+/* ============================================================
+   SHADOWS — flat by default. The signature is a HARD offset
+   shadow (no blur) that reads like a printed drop, not glow.
+   ============================================================ */
+:root {
+  --shadow-none:    none;
+  --shadow-hard-sm: 2px 2px 0 0 var(--border-strong);
+  --shadow-hard:    4px 4px 0 0 var(--border-strong);
+  --shadow-hard-accent: 4px 4px 0 0 var(--accent);
+
+  /* soft shadows reserved for floating layers (menus, dialogs, toasts) */
+  --shadow-pop:     0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-pop-lg:  0 12px 48px rgba(0, 0, 0, 0.55);
+}

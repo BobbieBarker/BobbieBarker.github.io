@@ -1,0 +1,45 @@
+<!-- @dsCard group="Brand" viewport="700x230" name="Iconography" subtitle="ASCII/unicode glyphs are the native icon set; Lucide (thin stroke) for the rest" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin:0; background:var(--bg); padding:24px; display:flex; flex-direction:column; gap:20px; }
+  .lbl { font-family:var(--font-mono); font-size:11px; letter-spacing:0.15em; text-transform:uppercase; color:var(--text-muted); margin-bottom:12px; }
+  .glyphs { display:flex; gap:18px; flex-wrap:wrap; }
+  .g { display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .g .ch { font-family:var(--font-mono); font-size:22px; color:var(--text); width:42px; height:42px; border:1px solid var(--border); border-radius:var(--radius-sm); display:flex; align-items:center; justify-content:center; }
+  .g .ch.acc { color:var(--accent); }
+  .g .nm { font-family:var(--font-mono); font-size:10px; color:var(--text-muted); }
+  .icons { display:flex; gap:16px; flex-wrap:wrap; }
+  .icons i { color:var(--text-secondary); }
+</style></head>
+<body>
+  <div>
+    <div class="lbl">// native — monospace glyphs</div>
+    <div class="glyphs">
+      <div class="g"><div class="ch acc">&gt;_</div><div class="nm">prompt</div></div>
+      <div class="g"><div class="ch">→</div><div class="nm">next</div></div>
+      <div class="g"><div class="ch">←</div><div class="nm">back</div></div>
+      <div class="g"><div class="ch">↗</div><div class="nm">external</div></div>
+      <div class="g"><div class="ch acc">·</div><div class="nm">sep</div></div>
+      <div class="g"><div class="ch">//</div><div class="nm">note</div></div>
+      <div class="g"><div class="ch acc">$</div><div class="nm">shell</div></div>
+      <div class="g"><div class="ch">~/</div><div class="nm">path</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="lbl">// rich ui — lucide, 1.5px stroke</div>
+    <div class="icons">
+      <i data-lucide="rss" width="22" height="22"></i>
+      <i data-lucide="search" width="22" height="22"></i>
+      <i data-lucide="github" width="22" height="22"></i>
+      <i data-lucide="terminal" width="22" height="22"></i>
+      <i data-lucide="git-branch" width="22" height="22"></i>
+      <i data-lucide="clock" width="22" height="22"></i>
+      <i data-lucide="arrow-up-right" width="22" height="22"></i>
+      <i data-lucide="copy" width="22" height="22"></i>
+    </div>
+  </div>
+  <script>lucide.createIcons();</script>
+</body></html>

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish Blog Article"
+  short_description: "Publish articles from this Astro blog"
+  default_prompt: "Use $publish-blog-article to draft, validate, and publish a new article."

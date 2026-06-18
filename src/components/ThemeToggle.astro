@@ -1,0 +1,74 @@
+<div class="theme-toggle" role="group" aria-label="Theme">
+	<button type="button" data-theme-choice="dark" aria-pressed="true">dark</button>
+	<button type="button" data-theme-choice="light" aria-pressed="false">light</button>
+</div>
+
+<script is:inline>
+	(() => {
+		const root = document.documentElement;
+		const buttons = document.querySelectorAll('[data-theme-choice]');
+
+		function getTheme() {
+			return root.dataset.theme === 'light' ? 'light' : 'dark';
+		}
+
+		function applyTheme(theme) {
+			if (theme === 'light') {
+				root.dataset.theme = 'light';
+			} else {
+				root.removeAttribute('data-theme');
+			}
+
+			try {
+				localStorage.setItem('theme', theme);
+			} catch {
+				/* Theme persistence is a preference, not a requirement. */
+			}
+
+			buttons.forEach((button) => {
+				button.setAttribute('aria-pressed', button.dataset.themeChoice === theme ? 'true' : 'false');
+			});
+		}
+
+		buttons.forEach((button) => {
+			button.addEventListener('click', () => applyTheme(button.dataset.themeChoice || 'dark'));
+		});
+
+		applyTheme(getTheme());
+	})();
+</script>
+
+<style>
+	.theme-toggle {
+		align-items: center;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		display: inline-grid;
+		grid-template-columns: repeat(2, minmax(48px, 1fr));
+		min-height: 34px;
+		overflow: hidden;
+	}
+
+	button {
+		background: transparent;
+		border: 0;
+		color: var(--text-muted);
+		cursor: pointer;
+		font-family: var(--font-mono);
+		font-size: var(--text-xs);
+		font-weight: var(--weight-medium);
+		letter-spacing: var(--tracking-wider);
+		min-height: 34px;
+		padding: 0 var(--space-2);
+		text-transform: uppercase;
+	}
+
+	button + button {
+		border-left: 1px solid var(--border);
+	}
+
+	button[aria-pressed='true'] {
+		background: var(--accent);
+		color: var(--accent-contrast);
+	}
+</style>

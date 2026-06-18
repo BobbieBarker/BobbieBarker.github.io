@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT"
+
+command="${1:-help}"
+if [ "$#" -gt 0 ]; then
+	shift
+fi
+
+case "$command" in
+	help|-h|--help)
+		cat <<'HELP'
+Blog commands:
+  bin/blog dev              Start the local dev server
+  bin/blog build            Build the production site
+  bin/blog check            Alias for build
+  bin/blog preview          Preview the production build
+  bin/blog new "Title"      Create a new draft Markdown article
+  bin/blog new --dry-run "Title"
+  bin/blog status           Show git status
+
+Make aliases:
+  make dev
+  make build
+  make check
+  make preview
+  make new TITLE="Title"
+  make new TITLE="Title" DRY_RUN=1
+  make status
+HELP
+		;;
+	dev)
+		exec npm run dev -- "$@"
+		;;
+	build|check)
+		exec npm run build -- "$@"
+		;;
+	preview)
+		exec npm run preview -- "$@"
+		;;
+	new|post)
+		exec node scripts/new-post.mjs "$@"
+		;;
+	status)
+		exec git status --short
+		;;
+	*)
+		echo "Unknown command: $command" >&2
+		echo "Run 'bin/blog help' for available commands." >&2
+		exit 1
+		;;
+esac

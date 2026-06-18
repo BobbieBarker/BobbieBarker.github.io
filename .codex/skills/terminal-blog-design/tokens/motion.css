@@ -1,0 +1,15 @@
+/* ============================================================
+   MOTION — minimal & snappy. No bounce, no float. Things move
+   fast and stop hard, like a terminal repaint.
+   ============================================================ */
+:root {
+  --duration-instant: 60ms;  /* @kind other */
+  --duration-fast:    100ms; /* @kind other */
+  --duration-base:    160ms; /* @kind other */
+  --duration-slow:    240ms; /* @kind other */
+
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);   /* @kind other */
+  /* default brutalist feel */
+  --ease-snap:   cubic-bezier(0.5, 0, 0, 1);     /* @kind other */
+}

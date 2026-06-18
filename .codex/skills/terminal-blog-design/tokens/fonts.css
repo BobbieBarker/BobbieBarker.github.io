@@ -1,0 +1,9 @@
+/* ============================================================
+   FONTS — webfonts shipped to consumers.
+   Space Mono  : display / wordmark / headlines / big numerics
+   JetBrains Mono : body prose, code, UI, meta — everything else
+   NOTE: currently loaded from Google Fonts CDN. To self-host,
+   drop the .woff2 files in assets/fonts/ and replace the @import
+   below with local @font-face rules pointing at them.
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');

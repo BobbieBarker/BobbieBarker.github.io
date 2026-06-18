@@ -1,0 +1,89 @@
+---
+import { getCollection } from 'astro:content';
+import PostRow from '../../components/PostRow.astro';
+import Rule from '../../components/Rule.astro';
+import Tag from '../../components/Tag.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { SITE_DESCRIPTION } from '../../consts';
+import {
+	getAllTags,
+	getPostsForTag,
+	getPublishedWriting,
+	getTagHref,
+	type TagSummary,
+} from '../../utils/writing';
+
+export async function getStaticPaths() {
+	const posts = getPublishedWriting(await getCollection('writing'));
+	const tags = getAllTags(posts);
+
+	return tags.map((tag) => ({
+		params: { tag: tag.slug },
+		props: { tag },
+	}));
+}
+
+interface Props {
+	tag: TagSummary;
+}
+
+const { tag } = Astro.props;
+const posts = getPublishedWriting(await getCollection('writing'));
+const tags = getAllTags(posts);
+const taggedPosts = getPostsForTag(posts, tag.name);
+---
+
+<SiteLayout
+	title={`Tag: ${tag.name}`}
+	description={`Articles tagged ${tag.name}. ${SITE_DESCRIPTION}`}
+	active="tags"
+	promptPath={`tags/${tag.slug}`}
+>
+	<section class="page-shell tags-page" aria-labelledby="tag-heading">
+		<p class="ds-overline">$ grep -r --tag={tag.name}</p>
+		<h1 id="tag-heading">{tag.name}</h1>
+		<div class="tag-cloud" aria-label="All tags">
+			<Tag href="/tags/">all</Tag>
+			{
+				tags.map((item) => (
+					<Tag href={getTagHref(item.name)} count={item.count} active={item.slug === tag.slug}>
+						{item.name}
+					</Tag>
+				))
+			}
+		</div>
+
+		<Rule
+			label={`${taggedPosts.length} ${taggedPosts.length === 1 ? 'entry' : 'entries'} - ${tag.name}`}
+		/>
+		<div class="post-list">
+			{taggedPosts.map((post, index) => <PostRow post={post} index={index} />)}
+		</div>
+	</section>
+</SiteLayout>
+
+<style>
+	.tags-page {
+		display: grid;
+		gap: var(--space-6);
+	}
+
+	.tags-page > .ds-overline {
+		margin: 0;
+	}
+
+	h1 {
+		color: var(--text);
+		font-family: var(--font-display);
+		font-size: var(--text-h1);
+		line-height: var(--leading-tight);
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.tag-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+</style>

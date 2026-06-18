@@ -1,0 +1,31 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+	title: string;
+	description: string;
+	active?: 'writing' | 'tags' | 'about';
+	promptPath?: string;
+	type?: 'website' | 'article';
+}
+
+const { title, description, active = 'writing', promptPath = '', type = 'website' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead title={title} description={description} type={type} />
+		<slot name="head" />
+	</head>
+	<body>
+		<a class="skip-link" href="#main">Skip to main content</a>
+		<Header active={active} promptPath={promptPath} />
+		<main id="main">
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -1,0 +1,112 @@
+/* ============================================================
+   COLORS
+   Dark is the default identity (:root). Light is opt-in via
+   [data-theme="light"]. Code blocks stay on the dark terminal
+   surface in BOTH themes — that's a deliberate brand rule.
+   ============================================================ */
+:root {
+  /* --- base ink scale (raw values) --- */
+  --black:        #0a0a0a;
+  --near-black:   #0f0f0f;
+  --carbon:       #151515;
+  --carbon-2:     #1c1c1c;
+  --line:         #2a2a2a;
+  --line-2:       #383838;
+  --ash:          #6a6a6a;
+  --smoke:        #8c8c8c;
+  --fog:          #b4b4b0;
+  --bone:         #e8e8e4;
+  --white:        #fafafa;
+
+  /* --- brand accent (signature orange) --- */
+  --orange:       #ff5c35;
+  --orange-bright:#ff7a57;
+  --orange-dim:   #d94a28;
+  --orange-wash:  rgba(255, 92, 53, 0.12);
+  --orange-line:  rgba(255, 92, 53, 0.40);
+
+  /* --- semantic status (used sparingly) --- */
+  --green:   #5fcf80;
+  --amber:   #e0a83e;
+  --red:     #f06a5a;
+  --blue:    #5aa0f0;
+
+  /* === SEMANTIC ALIASES (dark) === */
+  --bg:             var(--near-black);
+  --bg-sunken:      var(--black);
+  --surface:        var(--carbon);
+  --surface-raised: var(--carbon-2);
+  --surface-hover:  #222222;
+
+  --border:         var(--line);
+  --border-strong:  var(--bone);   /* the bright brutalist rule */
+  --border-accent:  var(--orange-line);
+
+  --text:           var(--bone);
+  --text-secondary: var(--smoke);
+  --text-muted:     var(--ash);
+  --text-inverse:   var(--near-black);
+  --text-accent:    var(--orange);
+
+  --link:           var(--orange);
+  --link-hover:     var(--orange-bright);
+
+  --accent:          var(--orange);
+  --accent-hover:    var(--orange-bright);
+  --accent-contrast: var(--near-black);   /* text on an orange fill */
+  --accent-wash:     var(--orange-wash);
+
+  --success: var(--green);
+  --warning: var(--amber);
+  --danger:  var(--red);
+  --info:    var(--blue);
+
+  --selection-bg:  var(--orange);
+  --selection-fg:  var(--near-black);
+
+  /* === CODE / SYNTAX (constant across themes) === */
+  --code-bg:        #0a0a0a;
+  --code-border:    #262626;
+  --code-text:      #d4d4d4;
+  --code-gutter:    #4a4a4a;
+  --syntax-comment: #5c5c5c;
+  --syntax-keyword: #ff5c35;  /* def, end, do — accent */
+  --syntax-function:#e8e8e4;  /* fn names — bone */
+  --syntax-string:  #8fa876;  /* sage */
+  --syntax-number:  #d99a4e;  /* amber */
+  --syntax-atom:    #c98fd6;  /* :atoms / symbols — violet */
+  --syntax-punct:   #8c8c8c;
+  --syntax-variable:#d4d4d4;
+  --syntax-builtin: #6aa6c0;  /* modules / types */
+}
+
+/* === LIGHT THEME — paper + high-contrast black === */
+[data-theme="light"] {
+  --bg:             #f5f3ec;
+  --bg-sunken:      #ebe8df;
+  --surface:        #ffffff;
+  --surface-raised: #ffffff;
+  --surface-hover:  #f0ede5;
+
+  --border:         #d6d1c4;
+  --border-strong:  #0f0f0f;   /* black rule on paper */
+  --border-accent:  var(--orange-line);
+
+  --text:           #141414;
+  --text-secondary: #4a4640;
+  --text-muted:     #837d70;
+  --text-inverse:   #fafafa;
+  --text-accent:    #d23c18;
+
+  --link:           #d23c18;
+  --link-hover:     #ff5c35;
+
+  --accent:          #e8431c;
+  --accent-hover:    #ff5c35;
+  --accent-contrast: #fafafa;
+  --accent-wash:     rgba(232, 67, 28, 0.10);
+
+  --selection-bg:  #e8431c;
+  --selection-fg:  #fafafa;
+  /* code/syntax tokens intentionally unchanged — code stays dark */
+}

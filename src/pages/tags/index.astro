@@ -1,0 +1,54 @@
+---
+import { getCollection } from 'astro:content';
+import PostRow from '../../components/PostRow.astro';
+import Rule from '../../components/Rule.astro';
+import Tag from '../../components/Tag.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { SITE_DESCRIPTION } from '../../consts';
+import { getAllTags, getPublishedWriting, getTagHref } from '../../utils/writing';
+
+const posts = getPublishedWriting(await getCollection('writing'));
+const tags = getAllTags(posts);
+---
+
+<SiteLayout title="Tags" description={SITE_DESCRIPTION} active="tags" promptPath="tags">
+	<section class="page-shell tags-page" aria-labelledby="tags-heading">
+		<p class="ds-overline">$ grep -r --tag</p>
+		<h1 id="tags-heading">Filter by topic</h1>
+		<div class="tag-cloud" aria-label="All tags">
+			<Tag href="/" active={!tags.length}>all</Tag>
+			{tags.map((tag) => <Tag href={getTagHref(tag.name)} count={tag.count}>{tag.name}</Tag>)}
+		</div>
+
+		<Rule label={`${posts.length} ${posts.length === 1 ? 'entry' : 'entries'}`} />
+		<div class="post-list">
+			{posts.map((post, index) => <PostRow post={post} index={index} />)}
+		</div>
+	</section>
+</SiteLayout>
+
+<style>
+	.tags-page {
+		display: grid;
+		gap: var(--space-6);
+	}
+
+	.tags-page > .ds-overline {
+		margin: 0;
+	}
+
+	h1 {
+		color: var(--text);
+		font-family: var(--font-display);
+		font-size: var(--text-h1);
+		line-height: var(--leading-tight);
+		margin: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.tag-cloud {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+</style>

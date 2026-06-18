@@ -1,63 +1,75 @@
-# Astro Starter Kit: Blog
+# BobbieBarker.github.io
+
+Static engineering writing on Astro and GitHub Pages.
+
+## Requirements
+
+- asdf
+- Node.js from `.tool-versions`
+- npm
+
+## Local Development
 
 ```sh
-npm create astro@latest -- --template blog
+asdf install
+npm install
+make dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The dev server runs at `http://localhost:4321`.
 
-Features:
+## Writing Articles
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and Open Graph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+Create Markdown or MDX files in `src/content/writing/`.
 
-## 🚀 Project Structure
+```md
+---
+title: 'Article title'
+date: '2026-06-17'
+excerpt: 'A short summary for feeds, SEO, and link previews.'
+tags: ['elixir']
+draft: true
+---
 
-Inside of your Astro project, you'll see the following folders and files:
+Article body goes here.
+```
+
+The file name becomes the canonical URL:
 
 ```text
-├── public/
-├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/content/writing/my-article.md -> /writing/my-article/
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+Generate a draft:
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```sh
+make new TITLE="How I debugged the thing"
+```
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+Preview the generated file without writing:
 
-Any static assets, like images, can be placed in the `public/` directory.
+```sh
+make new TITLE="How I debugged the thing" DRY_RUN=1
+```
 
-## 🧞 Commands
+Set `draft: false` when the article is ready for public indexes, RSS, sitemap, and navigation.
 
-All commands are run from the root of the project, from a terminal:
+## Publishing
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+The GitHub Actions workflow in `.github/workflows/deploy.yml` builds the site and publishes it to GitHub Pages whenever `main` changes.
 
-## 👀 Want to learn more?
+Before pushing the repository for the first time, configure GitHub Pages to use **GitHub Actions** as the Pages source.
 
-Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+## Useful Commands
 
-## Credit
+| Command | Action |
+| --- | --- |
+| `make dev` | Start the local dev server |
+| `make build` | Build the static site into `dist/` |
+| `make check` | Alias for `make build` |
+| `make preview` | Preview the production build locally |
+| `make new TITLE="Title"` | Create a draft article |
+| `make new TITLE="Title" DRY_RUN=1` | Preview the generated article file |
+| `make status` | Show git status |
 
-This theme is based off of the lovely [Bear Blog](https://github.com/HermanMartinus/bearblog/).
+Use `bin/blog help` to see the direct command aliases.

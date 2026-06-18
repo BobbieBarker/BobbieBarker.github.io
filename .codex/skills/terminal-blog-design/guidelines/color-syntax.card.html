@@ -1,0 +1,22 @@
+<!-- @dsCard group="Colors" viewport="700x180" name="Syntax Palette" subtitle="Code highlighting tokens — constant across light & dark" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; background:var(--bg); padding:20px; }
+  .blk { background:var(--code-bg); border:1px solid var(--code-border); border-radius:var(--radius-sm); padding:16px 18px; font-family:var(--font-code); font-size:13px; line-height:1.7; }
+  .k{color:var(--syntax-keyword)} .b{color:var(--syntax-builtin)} .f{color:var(--syntax-function)}
+  .a{color:var(--syntax-atom)} .s{color:var(--syntax-string)} .n{color:var(--syntax-number)}
+  .c{color:var(--syntax-comment)} .t{color:var(--code-text)}
+</style></head>
+<body>
+  <div class="blk">
+    <div class="c"># reconcile partitioned replicas</div>
+    <div><span class="k">defmodule</span> <span class="b">Cluster.Partition</span> <span class="k">do</span></div>
+    <div>&nbsp;&nbsp;<span class="k">def</span> <span class="f">merge</span>(<span class="t">a</span>, <span class="t">b</span>, <span class="a">:lww</span>) <span class="k">do</span></div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="b">Map</span>.<span class="f">merge</span>(<span class="t">a</span>, <span class="t">b</span>, <span class="k">fn</span> _k, v1, v2 -> <span class="f">max</span>(v1, v2) <span class="k">end</span>)</div>
+    <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="c"># timeout in ms</span> <span class="n">5_000</span> <span class="s">"reconciled"</span></div>
+    <div>&nbsp;&nbsp;<span class="k">end</span></div>
+    <div><span class="k">end</span></div>
+  </div>
+</body></html>

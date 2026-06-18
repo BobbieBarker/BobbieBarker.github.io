@@ -1,0 +1,44 @@
+/* ============================================================
+   TYPOGRAPHY
+   Two monospace families. Space Mono is the characterful
+   display face; JetBrains Mono carries body, code & UI.
+   ============================================================ */
+:root {
+  /* --- families --- */
+  --font-display: 'Space Mono', ui-monospace, 'Cascadia Mono', monospace;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-body:    var(--font-mono);
+  --font-code:    var(--font-mono);
+
+  /* --- weights --- */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold:600;
+  --weight-bold:    700;
+
+  /* --- type scale (16px root) --- */
+  --text-display: 3.5rem;     /* 56 — hero / big numerics  */
+  --text-h1:      2.25rem;    /* 36 */
+  --text-h2:      1.625rem;   /* 26 */
+  --text-h3:      1.25rem;    /* 20 */
+  --text-h4:      1.0625rem;  /* 17 */
+  --text-body-lg: 1.0625rem;  /* 17 — article prose */
+  --text-body:    0.9375rem;  /* 15 — default UI */
+  --text-sm:      0.8125rem;  /* 13 — meta */
+  --text-xs:      0.6875rem;  /* 11 — labels / overline */
+  --text-code:    0.875rem;   /* 14 */
+
+  /* --- line-height --- */
+  --leading-tight:   1.12;
+  --leading-snug:    1.3;
+  --leading-normal:  1.5;
+  --leading-relaxed: 1.72;
+  --leading-code:    1.65;
+
+  /* --- letter-spacing --- */
+  --tracking-tight:  -0.02em;
+  --tracking-snug:   -0.01em;
+  --tracking-normal: 0;
+  --tracking-wide:   0.08em;
+  --tracking-wider:  0.15em;   /* uppercase overlines / nav */
+}

@@ -1,0 +1,21 @@
+<!-- @dsCard group="Colors" viewport="700x150" name="Brand Accent" subtitle="The single signature orange — links, primary actions, active state" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; background:var(--bg); padding:20px; }
+  .row { display:flex; gap:14px; flex-wrap:wrap; }
+  .sw { display:flex; flex-direction:column; gap:8px; }
+  .chip { width:150px; height:64px; border-radius:var(--radius-sm); border:1px solid var(--border); }
+  .meta { font-family:var(--font-mono); font-size:11px; line-height:1.5; }
+  .meta b { color:var(--text); font-weight:500; display:block; }
+  .meta span { color:var(--text-muted); }
+</style></head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="chip" style="background:var(--orange)"></div><div class="meta"><b>--orange</b><span>#ff5c35 · accent</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--orange-bright)"></div><div class="meta"><b>--orange-bright</b><span>#ff7a57 · hover</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--orange-dim)"></div><div class="meta"><b>--orange-dim</b><span>#d94a28 · pressed</span></div></div>
+    <div class="sw"><div class="chip" style="background:var(--orange-wash)"></div><div class="meta"><b>--orange-wash</b><span>12% · fills</span></div></div>
+  </div>
+</body></html>

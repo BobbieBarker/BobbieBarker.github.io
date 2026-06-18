@@ -1,0 +1,55 @@
+<!-- @dsCard group="Blog" viewport="1080x760" name="Blog" subtitle="Interactive click-through: home → article → tags → about" -->
+<!-- @startingPoint section="Blog" subtitle="Full brutalist engineering-blog (home, article, tags, about)" viewport="1080x760" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~/writing</title>
+<link rel="icon" href="../../assets/favicon.svg">
+<link rel="stylesheet" href="../../styles.css">
+<style>
+  html, body { margin: 0; min-height: 100%; background: var(--bg); }
+  @keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel" src="Home.jsx"></script>
+<script type="text/babel" src="Article.jsx"></script>
+<script type="text/babel" src="Archive.jsx"></script>
+<script type="text/babel" src="About.jsx"></script>
+<script type="text/babel" data-presets="react">
+  function App() {
+    const [state, setState] = React.useState({ route: 'home', param: null });
+    const go = (route, param = null) => setState({ route, param });
+    let view;
+    if (state.route === 'article') view = <window.Article id={state.param} go={go} />;
+    else if (state.route === 'archive') view = <window.Archive tag={state.param} go={go} />;
+    else if (state.route === 'about') view = <window.About go={go} />;
+    else view = <window.Home go={go} />;
+    return (
+      <React.Fragment>
+        <window.Header route={state.route} go={go} />
+        <main>{view}</main>
+        <window.Footer go={go} />
+      </React.Fragment>
+    );
+  }
+  function mount() {
+    if (!window.Home || !window.Header || !window.Article || !window.Archive || !window.About) {
+      return setTimeout(mount, 30);
+    }
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  }
+  mount();
+</script>
+</body>
+</html>

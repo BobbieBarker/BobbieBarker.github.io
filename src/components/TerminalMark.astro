@@ -1,0 +1,35 @@
+---
+interface Props {
+	size?: number;
+	label?: string;
+}
+
+const { size = 30, label } = Astro.props;
+---
+
+<span
+	class="terminal-mark"
+	style={`--mark-size: ${size}px`}
+	aria-hidden={label ? undefined : 'true'}
+	aria-label={label}
+>
+	&gt;_
+</span>
+
+<style>
+	.terminal-mark {
+		align-items: center;
+		background: var(--accent);
+		border-radius: var(--radius-md);
+		color: var(--accent-contrast);
+		display: inline-flex;
+		flex: 0 0 auto;
+		font-family: var(--font-mono);
+		font-size: calc(var(--mark-size) * 0.48);
+		font-weight: var(--weight-bold);
+		height: var(--mark-size);
+		justify-content: center;
+		line-height: 1;
+		width: var(--mark-size);
+	}
+</style>

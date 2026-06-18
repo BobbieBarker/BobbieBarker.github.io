@@ -1,0 +1,9 @@
+/* ============================================================
+   RADII — brutalist: mostly square. 2px is the max.
+   ============================================================ */
+:root {
+  --radius-none: 0;
+  --radius-sm:   2px;
+  --radius-md:   3px;
+  --radius-pill: 999px;   /* tags / status dots only */
+}

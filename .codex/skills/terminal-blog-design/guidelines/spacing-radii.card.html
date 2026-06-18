@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Corner Radii" subtitle="Brutalist: mostly square. 2px is the max (pills excepted)" -->
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin:0; background:var(--bg); padding:22px; }
+  .row { display:flex; gap:20px; }
+  .sw { display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+  .box { width:90px; height:60px; background:var(--surface); border:1px solid var(--border-strong); }
+  .meta { font-family:var(--font-mono); font-size:11px; }
+  .meta b { color:var(--text); font-weight:500; display:block; }
+  .meta span { color:var(--text-muted); }
+</style></head>
+<body>
+  <div class="row">
+    <div class="sw"><div class="box" style="border-radius:var(--radius-none)"></div><div class="meta"><b>--radius-none</b><span>0 · default</span></div></div>
+    <div class="sw"><div class="box" style="border-radius:var(--radius-sm)"></div><div class="meta"><b>--radius-sm</b><span>2px · most UI</span></div></div>
+    <div class="sw"><div class="box" style="border-radius:var(--radius-md)"></div><div class="meta"><b>--radius-md</b><span>3px · code blocks</span></div></div>
+    <div class="sw"><div class="box" style="border-radius:var(--radius-pill);width:60px"></div><div class="meta"><b>--radius-pill</b><span>tags / dots only</span></div></div>
+  </div>
+</body></html>

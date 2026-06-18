@@ -1,0 +1,321 @@
+---
+import { type CollectionEntry, getCollection, render } from 'astro:content';
+import Rule from '../../components/Rule.astro';
+import Tag from '../../components/Tag.astro';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { SITE_HANDLE, SITE_TITLE } from '../../consts';
+import {
+	dateISOString,
+	formatDate,
+	getPublishedWriting,
+	getReadingTime,
+	getTagHref,
+} from '../../utils/writing';
+
+export async function getStaticPaths() {
+	const posts = getPublishedWriting(await getCollection('writing'));
+
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+interface Props {
+	post: CollectionEntry<'writing'>;
+}
+
+const { post } = Astro.props;
+const posts = getPublishedWriting(await getCollection('writing'));
+const index = posts.findIndex((entry) => entry.id === post.id);
+const newerPost = index > 0 ? posts[index - 1] : undefined;
+const olderPost = index >= 0 ? posts[index + 1] : undefined;
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter((heading) => heading.depth === 2);
+const canonicalURL = new URL(`/writing/${post.id}/`, Astro.site);
+const publishedDate = dateISOString(post.data.date);
+const modifiedDate = dateISOString(post.data.updatedDate ?? post.data.date);
+const authors = post.data.authors?.length ? post.data.authors : [SITE_HANDLE];
+const originalPublication = post.data.originalPublication;
+const originalAuthors = originalPublication?.authors?.length
+	? originalPublication.authors
+	: authors;
+const listFormatter = new Intl.ListFormat('en', { style: 'long', type: 'conjunction' });
+const formatAuthors = (names: string[]) => listFormatter.format(names);
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'BlogPosting',
+	headline: post.data.title,
+	description: post.data.excerpt,
+	datePublished: publishedDate,
+	dateModified: modifiedDate,
+	url: canonicalURL.toString(),
+	author: authors.map((name) => ({
+		'@type': 'Person',
+		name,
+	})),
+	publisher: {
+		'@type': 'Person',
+		name: SITE_HANDLE,
+	},
+	isBasedOn: originalPublication?.url,
+};
+---
+
+<SiteLayout
+	title={post.data.title}
+	description={post.data.excerpt}
+	type="article"
+	active="writing"
+	promptPath="writing"
+>
+	<script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+	<article class="reading-shell article" aria-labelledby="article-title">
+		<a class="back-link ds-overline" href="/">← cd ~/writing</a>
+
+		<header class="article-header">
+			<p class="ds-overline">{formatDate(post.data.date)} - {getReadingTime(post)}</p>
+			<h1 id="article-title">{post.data.title}</h1>
+			<p class="excerpt">{post.data.excerpt}</p>
+			<div class="article-tags" aria-label="Tags">
+				{post.data.tags.map((tag) => <Tag href={getTagHref(tag)}>{tag}</Tag>)}
+			</div>
+		</header>
+
+		{
+			post.data.series && (
+				<aside class="series-banner" aria-label="Series">
+					<span class="ds-overline">series</span>
+					<strong>{post.data.series}</strong>
+					{post.data.seriesOrder && <span>part {post.data.seriesOrder}</span>}
+				</aside>
+			)
+		}
+
+		<Rule variant="ascii" />
+
+		{
+			tocHeadings.length >= 2 && (
+				<nav class="toc" aria-labelledby="toc-heading">
+					<h2 id="toc-heading" class="ds-overline">// table of contents</h2>
+					<ol>
+						{tocHeadings.map((heading) => (
+							<li>
+								<a href={`#${heading.slug}`}>{heading.text}</a>
+							</li>
+						))}
+					</ol>
+				</nav>
+			)
+		}
+
+		<div class="prose">
+			<Content />
+		</div>
+
+		<footer class="article-footer">
+			<div class="author-note">
+				{
+					originalPublication ? (
+						<>
+							<strong>Originally published</strong>
+							<p>
+								Originally published on{' '}
+								<a href={originalPublication.url}>{originalPublication.site} ↗</a> on{' '}
+								{formatDate(originalPublication.date)} by {formatAuthors(originalAuthors)}.
+							</p>
+						</>
+					) : (
+						<>
+							<strong>{SITE_TITLE}</strong>
+							<p>I keep the canonical version here so mirrors can point back to one public source.</p>
+						</>
+					)
+				}
+			</div>
+
+			<nav class="post-nav" aria-label="Adjacent articles">
+				{
+					newerPost ? (
+						<a href={`/writing/${newerPost.id}/`}>
+							<span class="ds-overline">newer</span>
+							<strong>{newerPost.data.title}</strong>
+						</a>
+					) : (
+						<span />
+					)
+				}
+				{
+					olderPost && (
+						<a href={`/writing/${olderPost.id}/`}>
+							<span class="ds-overline">older</span>
+							<strong>{olderPost.data.title}</strong>
+						</a>
+					)
+				}
+			</nav>
+		</footer>
+	</article>
+</SiteLayout>
+
+<style>
+	.article {
+		display: grid;
+		gap: var(--space-6);
+		min-width: 0;
+	}
+
+	.article > * {
+		min-width: 0;
+	}
+
+	.back-link {
+		color: var(--text-muted);
+		justify-self: start;
+		text-decoration: none;
+	}
+
+	.back-link:hover {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	.article-header {
+		display: grid;
+		gap: var(--space-4);
+		min-width: 0;
+	}
+
+	.article-header p {
+		margin: 0;
+	}
+
+	h1 {
+		color: var(--text);
+		font-family: var(--font-display);
+		font-size: var(--text-display);
+		font-weight: var(--weight-bold);
+		letter-spacing: var(--tracking-tight);
+		line-height: var(--leading-tight);
+		margin: 0;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
+
+	.excerpt {
+		color: var(--text-secondary);
+		font-size: var(--text-body-lg);
+		line-height: var(--leading-relaxed);
+		overflow-wrap: anywhere;
+	}
+
+	.article-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+	}
+
+	.series-banner {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-left: 2px solid var(--accent);
+		border-radius: var(--radius-sm);
+		color: var(--text-secondary);
+		display: grid;
+		gap: var(--space-2);
+		padding: var(--space-4) var(--space-5);
+	}
+
+	.series-banner strong {
+		color: var(--text);
+		font-family: var(--font-display);
+		font-size: var(--text-h4);
+	}
+
+	.toc {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		padding: var(--space-5);
+	}
+
+	.toc h2 {
+		margin: 0 0 var(--space-3);
+	}
+
+	.toc ol {
+		display: grid;
+		gap: var(--space-2);
+		margin: 0;
+		padding-left: var(--space-5);
+	}
+
+	.toc a {
+		color: var(--text-secondary);
+	}
+
+	.toc a:hover {
+		color: var(--accent);
+	}
+
+	.article-footer {
+		border-top: 1px solid var(--border);
+		display: grid;
+		gap: var(--space-6);
+		margin-top: var(--space-4);
+		padding-top: var(--space-6);
+	}
+
+	.author-note {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		padding: var(--space-5);
+	}
+
+	.author-note strong {
+		color: var(--text);
+		font-family: var(--font-display);
+	}
+
+	.author-note p {
+		color: var(--text-secondary);
+		margin: var(--space-2) 0 0;
+	}
+
+	.post-nav {
+		display: grid;
+		gap: var(--space-4);
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.post-nav a {
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		color: var(--text);
+		display: grid;
+		gap: var(--space-2);
+		min-height: 100px;
+		padding: var(--space-4);
+		text-decoration: none;
+	}
+
+	.post-nav a:hover {
+		border-color: var(--border-strong);
+		box-shadow: var(--shadow-hard);
+		color: var(--accent);
+		transform: translate(-2px, -2px);
+	}
+
+	.post-nav strong {
+		font-family: var(--font-display);
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 640px) {
+		.post-nav {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

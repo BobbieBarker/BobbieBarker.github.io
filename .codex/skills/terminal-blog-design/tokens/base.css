@@ -1,0 +1,103 @@
+/* ============================================================
+   BASE — minimal element defaults bound to tokens. Kept light
+   so consumers aren't fighting an opinionated reset. The .prose
+   helper styles long-form article bodies.
+   ============================================================ */
+:root {
+  color-scheme: dark;
+}
+[data-theme="light"] { color-scheme: light; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--selection-bg); color: var(--selection-fg); }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  transition: color var(--duration-fast) var(--ease-snap);
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+code, pre, kbd, samp { font-family: var(--font-code); }
+
+/* inline code */
+:not(pre) > code {
+  font-size: 0.9em;
+  background: var(--accent-wash);
+  color: var(--text-accent);
+  padding: 0.1em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+/* thin custom scrollbar that matches the carbon surfaces */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-2) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border: 2px solid var(--bg);
+  border-radius: 0;
+}
+*::-webkit-scrollbar-thumb:hover { background: var(--ash); }
+
+/* ---- overline / kicker: the recurring uppercase mono label ---- */
+.ds-overline {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---- long-form article body ---- */
+.prose {
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text);
+  max-width: var(--container);
+}
+.prose > * + * { margin-top: var(--space-5); }
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-snug);
+  margin-top: var(--space-8);
+}
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-bold);
+  margin-top: var(--space-7);
+}
+.prose p { text-wrap: pretty; }
+.prose a { color: var(--link); text-decoration: underline; text-decoration-color: var(--orange-line); }
+.prose a:hover { text-decoration-color: var(--link-hover); }
+.prose blockquote {
+  border-left: var(--border-width-strong, 2px) solid var(--accent);
+  padding-left: var(--space-5);
+  color: var(--text-secondary);
+  font-style: italic;
+}
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: var(--space-8) 0;
+}
+.prose ul, .prose ol { padding-left: var(--space-5); }
+.prose li + li { margin-top: var(--space-2); }
