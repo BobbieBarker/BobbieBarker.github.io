@@ -1,7 +1,7 @@
 ---
 title: 'Safer Error Systems in Elixir'
 date: '2024-03-04'
-excerpt: 'Errors in Elixir deserve stable codes, readable messages, and useful details so systems can recover predictably without hiding failures.'
+excerpt: 'Errors in Elixir often get treated as second class citizens which can make our systems harder to debug than they need to be. In this post we discuss building a more intuitive and robust error system for an easier time debugging and troubleshooting down the road.'
 tags: ['elixir', 'error-handling', 'architecture']
 draft: false
 readingTime: '7 min'
@@ -13,21 +13,19 @@ originalPublication:
   authors: ['Chad King', 'Mika Kalathil']
 ---
 
-Have you ever been deep in the trenches of Elixir development and suddenly faced an error as daunting as a brick wall?
+This article was written by Chad King and Mika Kalathil. Chad is a Senior Engineer at Pepsi, who was among the pioneering group which embraced the Learn Elixir program. His expertise in the field is a result of extensive experience garnered at various medium to large-scale companies. This journey has equipped him with a comprehensive understanding of the intricacies in software development, allowing him to insightfully identify its successes and areas for improvement. His unique perspective is a valuable asset in the ever-evolving world of technology.
 
-Elixir is powerful, but error handling can still be awkward. There is not always a standard way to represent expected failures, and that leaves teams inventing local conventions as the system grows.
+Have you ever been deep in the trenches of Elixir development and suddenly faced an error as daunting as a brick wall? You’re not alone. Elixir, a language with immense power, presents unique challenges in error handling, often lacking a standard or defined way to represent errors.
 
-## The Elixir error dilemma
+## The Elixir Error Dilemma
 
-In Elixir applications, compiler errors get plenty of attention. Runtime errors are easier to neglect. They become non-informative, low-quality, or ignored like the terms and conditions on a signup form.
+In our journey of building Elixir applications, we regularly handle errors from our compiler, but runtime errors are often an afterthought, becoming non-informative, low quality or worst of all, ignored like the ‘Terms and Conditions’ on a sign-up form.
 
-As Elixir developers, we often hear "let it crash" and accidentally turn that into "do not think about errors." That is the wrong lesson. Gracefully handling expected errors, whether through logging, returning an error code, or running a recovery function, improves both uptime and debuggability.
+As Elixir developers, we often hear “Let it crash” and mistakenly assume that errors can be overlooked, allowing crashes to simply restart processes. This perspective is misleading and gracefully handling errors - be it through logging, returning an error code or running a recovery function - not only enhances our system’s uptime but also improves debuggability. Instead of allowing uncontrolled crashes, we should log the error, return it to our end user for appropriate handling or take some sort of recovery action, leaving only unexpected errors to crash the system so we can later investigate and turn them into expected errors.
 
-Unexpected errors should still crash. That is how we notice them, investigate them, and turn them into expected errors later. But once a failure mode is known, the system should have a useful way to represent it.
+## Missteps in Error Handling
 
-## Missteps in error handling
-
-Here is a common anti-pattern: representing errors as plain strings.
+Let’s explore a common anti-pattern. We encounter an error and decide to represent it as a string:
 
 ```elixir
 def api_request do
@@ -35,117 +33,95 @@ def api_request do
 end
 ```
 
-The message might look useful to a human, but it is fragile for software. Once an error is only a string, downstream code usually has two bad options.
+This message might seem useful and informative to us. Yet, for our software, this string is difficult and fragile to manage. We only have two options:
 
-#### Direct string matching
+#### _Direct String Matching_:
 
 ```elixir
 def some_call do
   case api_request() do
-    {:ok, value} ->
-      {:ok, value}
-
+    {:ok, value} -> {:ok, value}
     {:error, "Alert: A wild error appears! That API doesn't exist??"} ->
       execute_some_backup_function()
   end
 end
 ```
 
-#### Regex matching
+#### _Regex Matching_:
 
 ```elixir
 def some_call do
   case api_request() do
-    {:ok, value} ->
-      {:ok, value}
-
+    {:ok, value} -> {:ok, value}
     {:error, value} ->
       cond do
-        value =~ "API doesn't exist" ->
-          execute_some_backup_function()
-
-        value =~ "user not found" ->
-          execute_some_other_backup_function()
+        value =~ "API doesn't exist" -> execute_some_backup_function()
+        value =~ "user not found" -> execute_some_other_backup_function()
       end
   end
 end
 ```
 
-Whether you use exact string matching or regex matching, a small copy change can trigger unexpected behavior. String errors are useful for readability, but unreliable as a control-flow contract.
+Whether using exact string matching or regex, a small change by an unaware developer could trigger a cascade of unexpected side effects. This highlights an important lesson: string errors, while great for user readability, are fragile and unreliable for predictable error handling.
 
-## An atom of hope
+## An Atom of Hope
 
-Atoms are much better for pattern matching. They make control flow readable, stable, and explicit. Plenty of Elixir and Erlang APIs already use this shape.
+Atoms simplify pattern matching, making our code readable and narrative-like, enabling easy control flow, many standard library functions in Elixir & Erlang already do this such as `File`:
 
 ```elixir
 def bar(directory) do
   case File.ls(directory) do
-    {:ok, files} ->
-      files
-
-    {:error, :enoent} ->
-      "Directory wasn't found"
-
-    {:error, :eacces} ->
-      "Are you sure you have access?"
-
-    {:error, _reason} ->
-      "Game over, man."
+    :eexist -> "Directory wasn't found"
+    :eacces -> "Are you sure you have access?"
+    _ -> "Game over, man."
   end
 end
 ```
 
-Atoms are great for code, but they are not enough by themselves. They are not very helpful to an end user, they do not give you a centralized place to translate expected errors into friendly messages, and they do not carry extra debugging context.
+While useful in code, atoms come at the expense of human readability and lack a centralized location for listing and converting every expected error into a user-friendly format. Additionally, they don’t offer a place to include useful debugging information.
 
-## Merging the best of both worlds
+## Merging the Best of Both Worlds
 
-What if we combine the clarity of strings with the stability of atoms?
+What if we could combine the clarity of strings with the simplicity of atoms? Consider this approach:
 
 ```elixir
 def api_request do
-  {:error,
-   %{
-     code: :not_found,
-     message: "User not found. Maybe a game of hide-and-seek?",
-     details: %{user_id: 1234}
-   }}
+  {:error, %{
+    code: :not_found,
+    message: "User not found. Maybe a game of hide-and-seek?",
+    details: %{user_id: 1234}
+  }}
 end
 ```
 
-Now we have a human-readable message, a stable atom for control flow, and a defined place for debugging information.
+Now we have clear, human-readable messages, while also keeping an atom for declarative control flows, and a pre-defined spot for placing extra debugging information.
+We can then pattern match in a straightforward manner:
 
 ```elixir
-def some_call do
-  case api_request() do
-    {:ok, value} ->
-      {:ok, value}
-
-    {:error, %{code: :not_found, message: message}} ->
-      Logger.warning(message)
-      recovery_function()
-  end
+with {:error, %{code: :not_found, message: message}} <- api_request() do
+  Logger.warn(message)
+  recovery_function()
 end
 ```
 
-Now a developer can update the message without accidentally breaking the behavior of the system. We can log something readable, branch on something stable, and keep the error useful for later investigation.
+Now a developer can’t accidentally make a well-intended change that breaks our code, and we can log a human-readable error message for future investigation.
 
 ## Elevating with ErrorMessage
 
-Generic maps are an improvement, but they can still drift. With [`ErrorMessage`](https://github.com/mikaak/elixir_error_message), we can make error representation consistent across a system.
+Why settle for mere improvement when we can revolutionize? Utilizing generic maps for errors can be chaotic and inconsistent. With [ErrorMessage](https://github.com/mikaak/elixir_error_message), we can set a new standard for error representation in our systems.
 
-Returning errors becomes a function call:
+Returning errors becomes as simple as a function call:
 
 ```elixir
 def api_request do
-  {:error,
-   ErrorMessage.not_found(
-     "No user found. Just echoes and tumbleweeds.",
-     %{user_id: 1234}
-   )}
+  {:error, ErrorMessage.not_found(
+    "No user found. Just echoes and tumbleweeds.",
+    %{user_id: 1234} # We can omit this parameter if no details needed
+  )}
 end
 ```
 
-Which returns a struct like this:
+Which returns a struct like so:
 
 ```elixir
 %ErrorMessage{
@@ -155,36 +131,27 @@ Which returns a struct like this:
 }
 ```
 
-This gives us uniformity and readability. We can match on error codes, keep detailed context around for debugging, and serialize the same error shape through Phoenix APIs or logs.
+This approach ensures uniformity and readability, turning our errors into manageable and insightful tools. With `ErrorMessage`, we can effortlessly match errors and utilize the detailed information provided to simplify debugging for the end user. Moreover, we can leverage this information both in our Phoenix APIs and in our logs:
 
 ```elixir
 def show(conn, %{"user_id" => user_id}) do
   case Accounts.find_user(%{id: user_id}) do
-    {:ok, user} ->
-      json(conn, Map.from_struct(user))
-
-    {:error, %ErrorMessage{code: code} = error} ->
-      Logger.error(to_string(error))
-
-      conn
-      |> put_status(code)
-      |> json(ErrorMessage.to_jsonable_map(error))
+    {:ok, user} -> json(conn, Map.from_struct(user))
+    {:error, %ErrorMessage{code: code} = e} ->
+      Logger.error(to_string(e))
+      conn |> put_status(code) |> json(ErrorMessage.to_jsonable_map(e))
   end
 end
 ```
 
-`ErrorMessage` is battle-tested and has been in use at [Blitz](https://blitz.gg) for years. It has also been used at companies like [Requis](https://requis.com/) and [CheddarFlow](https://www.cheddarflow.com/) to make error systems more predictable and give users a better experience.
+`ErrorMessage` is battle tested and has been in use at [Blitz](https://blitz.gg) for over 4 years. It’s also been utilized in multiple other companies like [Requis](https://requis.com/) and [CheddarFlow](https://www.cheddarflow.com/) to help make error systems more predictable and give the users a great experience. Our goal is always to convert unexpected errors into expected errors by wrapping them in `ErrorMessage` and giving us a fighting chance against the entropy that happens over time in large systems.
 
-The goal is to convert unexpected errors into expected errors by wrapping them in `ErrorMessage`. That gives us a fighting chance against the entropy that appears over time in large systems.
+We can see it in use already in some other packages such as [EctoShorts](https://github.com/mikaak/ecto_shorts) and [ElixirCache](https://github.com/mikaak/elixir_cache) which treat errors as first-class citizens. The more errors and fail states the system can be expected to handle, the more resilient it should become.
 
-We can see this approach in packages like [`EctoShorts`](https://github.com/mikaak/ecto_shorts) and [`ElixirCache`](https://github.com/mikaak/elixir_cache), which treat errors as first-class citizens. The more failure states a system can handle intentionally, the more resilient it becomes.
+## Wrapping Up
 
-## Wrapping up
+In Elixir, errors are not stumbling blocks; they are opportunities to showcase our problem-solving skills. Treating errors as first-class citizens, thinking about, and utilizing our skills to resolve them and building our libraries to be able to support others doing so as well, is crucial. In some languages, like Go, this approach is ingrained in the language itself, forcing developers to consciously address and manage exceptions.
 
-In Elixir, errors are not just stumbling blocks. They are opportunities to make the system easier to understand.
+Armed with the right strategies and tools, we can use these techniques to masterfully navigate Elixir errors. Even the most challenging bugs become traceable and replicable with ease. By elevating our approach to error handling, we turn potential pitfalls into valuable insights, reinforcing the robustness and reliability of our Elixir applications.
 
-Treating errors as first-class citizens is crucial. We need to think about them, resolve them intentionally, and build libraries that help other developers do the same. In some languages, like Go, this habit is built into the shape of the language. In Elixir, we have to choose it.
-
-With the right strategies and tools, difficult bugs become easier to trace and reproduce. By improving our approach to error handling, we turn potential pitfalls into useful signals and make our applications more robust.
-
-Errors in Elixir should not be feared or ignored. They should be accounted for as a normal part of development, guiding us toward systems that are more predictable, more resilient, and easier to work with.
+Errors in Elixir, therefore, should not be feared or ignored. Instead, they should be actively accounted for as a normal part of our development process, guiding us toward creating more resilient and user-friendly applications. With a thoughtful and systematic approach to error handling, we transform our code bases into being predictable and easy to work with.
