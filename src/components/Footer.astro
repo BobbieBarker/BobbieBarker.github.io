@@ -1,5 +1,5 @@
 ---
-import { GITHUB_URL, SITE_DESCRIPTION } from '../consts';
+import { BUTTONDOWN_USERNAME, GITHUB_URL, SITE_DESCRIPTION } from '../consts';
 import TerminalMark from './TerminalMark.astro';
 ---
 
@@ -15,6 +15,7 @@ import TerminalMark from './TerminalMark.astro';
 		<nav aria-label="Footer navigation">
 			<a href={GITHUB_URL}>github</a>
 			<a href="/rss.xml">rss</a>
+			{BUTTONDOWN_USERNAME && <a href={`https://buttondown.com/${BUTTONDOWN_USERNAME}`}>subscribe</a>}
 		</nav>
 	</div>
 </footer>
