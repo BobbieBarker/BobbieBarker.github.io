@@ -59,7 +59,7 @@ Another [watched agents extend their own work](https://arxiv.org/abs/2603.24755v
 
 None of this calls for a new discipline. What we have learned over the last 60 years of building software remains true. Set the standard, make the right pattern easy to find, review the code, and reject implementations that reinvent solved problems.
 
-What changes is that the standard can no longer live in a senior developer's head. It has to sit somewhere the model reads. An ADR that says when to use a schema and when to use an option validator. A golden example showing the whole idiomatic implementation, including that the schema replaces the struct rather than sitting next to it. Static checks for the parts a machine can catch on its own.
+What changes is that the standard can no longer live in a senior developer's head. It has to sit somewhere the model reads. One tool you can use is an ADR that says when to use a schema and when to use an option validator. A golden example showing the full idiomatic implementation, including how the schema replaces the struct rather than sitting next to it, is a powerful mechanism because LLMs rely on pattern matching. When you give them a clear example, they will follow it. When it makes sense, and the validation can be broken down into a mechanical test, static checks for issues a machine can catch on its own can be game-changers.
 
 An outline for an ADR documenting your validation standards:
 
