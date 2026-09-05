@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import Rule from '../../components/Rule.astro';
+import SubscribeCta from '../../components/SubscribeCta.astro';
 import Tag from '../../components/Tag.astro';
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { SITE_HANDLE, SITE_TITLE } from '../../consts';
@@ -134,6 +135,8 @@ const jsonLd = {
 					)
 				}
 			</div>
+
+			<SubscribeCta />
 
 			<nav class="post-nav" aria-label="Adjacent articles">
 				{

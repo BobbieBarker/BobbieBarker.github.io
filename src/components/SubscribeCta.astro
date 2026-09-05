@@ -1,0 +1,85 @@
+---
+import { BUTTONDOWN_USERNAME } from '../consts';
+---
+
+{
+	BUTTONDOWN_USERNAME && (
+		<aside class="subscribe" aria-label="Subscribe to new essays">
+			<span class="ds-overline">// follow along</span>
+			<p>New essays land in your inbox when they publish. No schedule, no noise.</p>
+			<form
+				action={`https://buttondown.com/api/emails/embed-subscribe/${BUTTONDOWN_USERNAME}`}
+				method="post"
+			>
+				<input
+					type="email"
+					name="email"
+					placeholder="you@example.com"
+					required
+					aria-label="Email address"
+				/>
+				<button type="submit">subscribe</button>
+			</form>
+		</aside>
+	)
+}
+
+<style>
+	.subscribe {
+		background: var(--surface);
+		border: 1px solid var(--border);
+		border-left: 2px solid var(--accent);
+		border-radius: var(--radius-sm);
+		display: grid;
+		gap: var(--space-3);
+		padding: var(--space-5);
+	}
+
+	.subscribe p {
+		color: var(--text-secondary);
+		margin: 0;
+	}
+
+	form {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-3);
+	}
+
+	input[type='email'] {
+		background: var(--bg, transparent);
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		color: var(--text);
+		flex: 1 1 220px;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		min-width: 0;
+		padding: var(--space-3) var(--space-4);
+	}
+
+	input[type='email']:focus {
+		border-color: var(--accent);
+		outline: none;
+	}
+
+	button {
+		background: transparent;
+		border: 1px solid var(--border);
+		border-radius: var(--radius-sm);
+		color: var(--text-secondary);
+		cursor: pointer;
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		letter-spacing: var(--tracking-wide);
+		padding: var(--space-3) var(--space-5);
+		text-transform: uppercase;
+	}
+
+	button:hover {
+		border-color: var(--border-strong);
+		box-shadow: var(--shadow-hard);
+		color: var(--accent);
+		transform: translate(-2px, -2px);
+	}
+</style>
