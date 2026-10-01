@@ -8,7 +8,7 @@ readingTime: '7 min'
 authors: ['Chad King']
 ---
 
-I had stopped sending coverage reports to an outside service, so an agent received a ticket to delete the code that communicated with it. The change was a three-hunk edit in one module and a one-line regex fix in another. Before an agent edits a file, it has to read it, which is the right rule: an edit made without the surrounding code can compile but still break something two functions away. The first module was 33,585 lines long, and the second was 17,452, so the agent read both in full to make four small edits. Eight minutes into the run, its context had filled and been compacted.
+I had stopped sending coverage reports to an outside service, so an agent received a ticket to delete the code that communicated with it. The change was a three-chunk edit in one module and a one-line regex fix in another. Before an agent edits a file, it has to read it, which is the right rule: an edit made without the surrounding code can compile but still break something two functions away. The first module was 33,585 lines long, and the second was 17,452, so the agent read both in full to make four small edits. Eight minutes into the run, its context had filled and been compacted.
 
 At about 8 tokens per line, the first file alone is roughly 270,000 tokens. The read rule charged the agent the full price of the file and made that price impossible to miss. Making the read cheaper would have hidden the cost without changing it. The module was expensive to read because it combined CI monitoring, failure diagnosis, fix dispatch, and the merge queue in one place, so changing any one of them required loading all of them. Recognizing that was the first part of my job as the human in this system.
 
@@ -28,7 +28,7 @@ A change rarely reads just one file. It reads the target and follows calls into 
 
 A line limit sets a ceiling on the worst single read. Set it too low, and you split responsibilities that belong together, forcing every change to open more files to follow one idea. Long before LLMs, I considered files over 1,000 lines a smell, so 800 lines felt like a natural default. At about 7,000 tokens per file, it leaves room for close to 30 full reads in that budget.
 
-A code graph solves the search half of this. Ask it what calls a function, and it answers directly, so the agent doesn't have to grep the repository. It can only point to a file, though. If the change is at line 847 of a 2,500-line module, the agent reads all 2,500 lines, about 21,000 tokens, to change ten of them. The graph delivered the agent to the right address. The building is still oversized.
+A code graph solves the search half of this. Ask it what calls a function, and it answers directly, so the agent doesn't have to grep the repository. It can only point to a file, though. If the change is at line 847 of a 2,500-line module, the agent still reads all 2,500 lines, about 21,000 tokens. The graph delivered the agent to the right address. The building is still oversized.
 
 ## How it got that big
 
